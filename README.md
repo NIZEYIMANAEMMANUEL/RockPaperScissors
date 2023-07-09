@@ -1,61 +1,97 @@
-# RockPaperScissors
 <!DOCTYPE html>
 <html>
 <head>
   <title>Rock Paper Scissors</title>
-  <script src="script.js"></script>
 </head>
 <body>
+  <h1>Rock Paper Scissors</h1>
+
+  <div id="score"></div>
+  <div id="result"></div>
+
+  <button id="rock">Rock</button>
+  <button id="paper">Paper</button>
+  <button id="scissors">Scissors</button>
+
   <script>
-  function getComputerChoice() {
-  const choices = ['Rock', 'Paper', 'Scissors'];
-  const randomIndex = Math.floor(Math.random() * choices.length);
-  return choices[randomIndex];
-}
+    // Initialize score and selections
+    let playerScore = 0;
+    let computerScore = 0;
 
-function playRound(playerSelection, computerSelection) {
-  playerSelection = playerSelection.toLowerCase();
+    // DOM elements
+    const scoreDisplay = document.getElementById('score');
+    const resultDisplay = document.getElementById('result');
+    const rockBtn = document.getElementById('rock');
+    const paperBtn = document.getElementById('paper');
+    const scissorsBtn = document.getElementById('scissors');
 
-  if (playerSelection === computerSelection.toLowerCase()) {
-    return "It's a tie!";
-  } else if (
-    (playerSelection === 'rock' && computerSelection === 'Scissors') ||
-    (playerSelection === 'paper' && computerSelection === 'Rock') ||
-    (playerSelection === 'scissors' && computerSelection === 'Paper')
-  ) {
-    return `You win! ${playerSelection} beats ${computerSelection}.`;
-  } else {
-    return `You lose! ${computerSelection} beats ${playerSelection}.`;
-  }
-}
+    // Event listeners for buttons
+    rockBtn.addEventListener('click', () => playRound('rock'));
+    paperBtn.addEventListener('click', () => playRound('paper'));
+    scissorsBtn.addEventListener('click', () => playRound('scissors'));
 
-function game() {
-  let playerScore = 0;
-  let computerScore = 0;
+    // Play a round
+    function playRound(playerSelection) {
+      const computerSelection = computerPlay();
+      const result = determineWinner(playerSelection, computerSelection);
+      updateScore(result);
 
-  for (let i = 0; i < 5; i++) {
-    const playerSelection = prompt('Enter your choice: Rock, Paper, or Scissors');
-    const computerSelection = getComputerChoice();
-    const result = playRound(playerSelection, computerSelection);
-    console.log(result);
+      // Display result and score
+      resultDisplay.textContent = result;
+      scoreDisplay.textContent = `Player: ${playerScore} - Computer: ${computerScore}`;
 
-    if (result.startsWith('You win')) {
-      playerScore++;
-    } else if (result.startsWith('You lose')) {
-      computerScore++;
+      // Check if a player has won
+      if (playerScore === 5 || computerScore === 5) {
+        announceWinner();
+        resetGame();
+      }
     }
-  }
 
-  if (playerScore > computerScore) {
-    console.log('You win the game!');
-  } else if (playerScore < computerScore) {
-    console.log('You lose the game!');
-  } else {
-    console.log("It's a tie game!");
-  }
-}
-game();
-    </script>
+    // Generate computer's move
+    function computerPlay() {
+      const moves = ['rock', 'paper', 'scissors'];
+      return moves[Math.floor(Math.random() * 3)];
+    }
+
+    // Determine the winner of the round
+    function determineWinner(playerSelection, computerSelection) {
+      if (playerSelection === computerSelection) {
+        return "It's a tie!";
+      } else if (
+        (playerSelection === 'rock' && computerSelection === 'scissors') ||
+        (playerSelection === 'scissors' && computerSelection === 'paper') ||
+        (playerSelection === 'paper' && computerSelection === 'rock')
+      ) {
+        return 'You win!';
+      } else {
+        return 'Computer wins!';
+      }
+    }
+
+    // Update the score based on the round result
+    function updateScore(result) {
+      if (result === 'You win!') {
+        playerScore++;
+      } else if (result === 'Computer wins!') {
+        computerScore++;
+      }
+    }
+
+    // Announce the winner of the game
+    function announceWinner() {
+      if (playerScore === 5) {
+        resultDisplay.textContent = 'Congratulations! You won the game!';
+      } else if (computerScore === 5) {
+        resultDisplay.textContent = 'Oops! Computer won the game!';
+      }
+    }
+
+    // Reset the game after a player wins
+    function resetGame() {
+      playerScore = 0;
+      computerScore = 0;
+      scoreDisplay.textContent = '';
+    }
+  </script>
 </body>
 </html>
-
